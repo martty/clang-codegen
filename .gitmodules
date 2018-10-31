@@ -4,6 +4,6 @@
 [submodule "ext/clang"]
 	path = ext/clang
 	url = https://git.llvm.org/git/clang.git
-[submodule "ext/extra"]
-	path = ext/extra
+[submodule "ext/clang-tools-extra"]
+	path = ext/clang-tools-extra
 	url = https://git.llvm.org/git/clang-tools-extra.git
