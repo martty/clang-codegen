@@ -50,3 +50,55 @@ index a0faf84..74b4580 100644
    }
  }
  
+diff --git a/include/clang/Basic/Attr.td b/include/clang/Basic/Attr.td
+index b7a6ca2..1bb7c74 100644
+--- a/include/clang/Basic/Attr.td
++++ b/include/clang/Basic/Attr.td
+@@ -3066,3 +3066,22 @@ def AlwaysDestroy : InheritableAttr {
+   let Subjects = SubjectList<[Var]>;
+   let Documentation = [AlwaysDestroyDocs];
+ }
++
++def PKYReflect : InheritableAttr {
++  let Spellings = [CXX11<"", "reflect", 200809>];
++  let Subjects = SubjectList<[CXXRecord]>;
++  let Documentation = [Undocumented];
++}
++
++def PKYCategory : InheritableAttr {
++  let Spellings = [CXX11<"", "category", 200809>];
++  let Subjects = SubjectList<[CXXRecord]>;
++  let Args = [StringArgument<"Category">];
++  let Documentation = [Undocumented];
++}
++
++def PKYProperty : InheritableAttr {
++  let Spellings = [CXX11<"", "property", 200809>];
++  let Subjects = SubjectList<[Field]>;
++  let Documentation = [Undocumented];
++}
+\ No newline at end of file
+diff --git a/lib/Sema/SemaDeclAttr.cpp b/lib/Sema/SemaDeclAttr.cpp
+index a0faf84..74b4580 100644
+--- a/lib/Sema/SemaDeclAttr.cpp
++++ b/lib/Sema/SemaDeclAttr.cpp
+@@ -6678,6 +6678,19 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
+   case ParsedAttr::AT_NoDestroy:
+     handleDestroyAttr(S, D, AL);
+     break;
++
++  // PKY
++  case ParsedAttr::AT_PKYReflect:
++    handleSimpleAttribute<PKYReflectAttr>(S, D, AL);
++    break;
++  case ParsedAttr::AT_PKYProperty:
++    handleSimpleAttribute<PKYPropertyAttr>(S, D, AL);
++    break;
++  case ParsedAttr::AT_PKYCategory:
++    llvm::StringRef arg;
++    if(S.checkStringLiteralArgumentAttr(AL, 0, arg, nullptr))
++      D->addAttr(::new (S.Context) PKYCategoryAttr(AL.getRange(), S.Context, arg, AL.getAttributeSpellingListIndex()));
++    break;
+   }
+ }
+ 

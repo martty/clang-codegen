@@ -1,1 +1,1 @@
-foo.ds
+foo.dsd
