@@ -1,6 +1,6 @@
 
 diff --git a/include/clang/Basic/Attr.td b/include/clang/Basic/Attr.td
-index b7a6ca2..1bb7c74 100644
+index b7a6ca20fd..1bb7c74424 100644
 --- a/include/clang/Basic/Attr.td
 +++ b/include/clang/Basic/Attr.td
 @@ -3066,3 +3066,22 @@ def AlwaysDestroy : InheritableAttr {
@@ -28,9 +28,32 @@ index b7a6ca2..1bb7c74 100644
 +}
 \ No newline at end of file
 diff --git a/lib/Sema/SemaDeclAttr.cpp b/lib/Sema/SemaDeclAttr.cpp
-index a0faf84..74b4580 100644
+index a0faf84095..2adf3830e3 100644
 --- a/lib/Sema/SemaDeclAttr.cpp
 +++ b/lib/Sema/SemaDeclAttr.cpp
+@@ -5831,14 +5831,14 @@ static void handleDeprecatedAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+   if (AL.isDeclspecAttribute() || AL.isCXX11Attribute())
+     checkAttributeAtMostNumArgs(S, AL, 1);
+   else if (AL.isArgExpr(1) && AL.getArgAsExpr(1) &&
+-           !S.checkStringLiteralArgumentAttr(AL, 1, Replacement))
+-    return;
+-
+-  if (!S.getLangOpts().CPlusPlus14 && AL.isCXX11Attribute() && !AL.isGNUScope())
+-    S.Diag(AL.getLoc(), diag::ext_cxx14_attr) << AL;
+-
+-  D->addAttr(::new (S.Context)
+-                 DeprecatedAttr(AL.getRange(), S.Context, Str, Replacement,
++           !S.checkStringLiteralArgumentAttr(AL, 1, Replacement))
++    return;
++
++  if (!S.getLangOpts().CPlusPlus14 && AL.isCXX11Attribute() && !AL.isGNUScope())
++    S.Diag(AL.getLoc(), diag::ext_cxx14_attr) << AL;
++
++  D->addAttr(::new (S.Context)
++                 DeprecatedAttr(AL.getRange(), S.Context, Str, Replacement,
+                                 AL.getAttributeSpellingListIndex()));
+ }
+ 
 @@ -6678,6 +6678,19 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
    case ParsedAttr::AT_NoDestroy:
      handleDestroyAttr(S, D, AL);
